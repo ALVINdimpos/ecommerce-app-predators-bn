@@ -4,9 +4,6 @@
   "description": "predator ecommerce project",
   "main": "server.js",
   "type": "module",
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "directories": {
     "test": "tests"
   },
