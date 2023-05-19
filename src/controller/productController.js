@@ -98,7 +98,7 @@ export const updateProduct = async (req, res) => {
     expiryDate: Joi.date().required(),
     picture_urls: Joi.array().items(Joi.string()),
     instock: Joi.number().integer().positive().required(),
-    available: Joi.string().valid("yes", "no").required(),
+    available: Joi.boolean().required(),
   });
   const { error } = schema.validate(inputData);
   if (error) return res.status(400).json({ error: error.details[0].message });
