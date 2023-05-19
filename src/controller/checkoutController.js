@@ -154,7 +154,7 @@ export const updateOrderStatus = async (req, res) => {
         message: 'Order not found',
       });
     }
-    if (order.status !== 'complete') {
+    if (order.status !== 'paid') {
       return res.status(403).json({
         status: 'fail',
         code: 403,
