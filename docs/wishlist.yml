@@ -1,0 +1,145 @@
+paths:
+  /api/wishlist:
+    post:
+      tags:
+        - Wishlist
+      name: Add Wishlist Item
+      summary: Add an item to the wishlist
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+      responses:
+        '201':
+          description: Product added to wishlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  wishlist:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+
+  /api/wishlist/{productId}:
+    delete:
+      tags:
+        - Wishlist
+      name: Delete Wishlist Item
+      summary: Delete an item from the wishlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          description: ID of the product to be deleted from the wishlist
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item removed from wishlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  wishlist:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+
+  /api/wishlist:
+    get:
+      tags:
+        - Wishlist
+      name: Get Wishlist
+      summary: Get all items in the wishlist
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Wishlist items retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  wishlist:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        picture_urls:
+          type: string
