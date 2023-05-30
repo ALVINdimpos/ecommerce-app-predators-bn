@@ -1,0 +1,247 @@
+paths:
+  /api/discount-coupons/createCoupons:
+    post:
+      tags:
+        - Coupons
+      summary: Create a new discount coupon
+      description: Creates a new discount coupon with the provided details
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CouponInput'
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Coupon created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coupon'
+        '400':
+          description: Invalid input provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/discount-coupons/getCoupons/{couponId}:
+    get:
+      tags:
+        - Coupons
+      summary: Get a discount coupon by ID
+      description: Retrieves a discount coupon based on the provided coupon ID
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of the discount coupon
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Coupon found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coupon'
+        '404':
+          description: Coupon not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/discount-coupons/getAllCoupons:
+    get:
+      tags:
+        - Coupons
+      summary: Get all discount coupons
+      description: Retrieves all discount coupons
+      responses:
+        '200':
+          description: Coupons found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coupon'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/discount-coupons/updateCoupon/{couponId}:
+    put:
+      tags:
+        - Coupons
+      summary: Update a discount coupon by ID
+      description: Updates a discount coupon based on the provided coupon ID
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of the discount coupon
+          required: true
+          schema:
+            type: integer
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CouponInput'
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Coupon updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coupon'
+        '400':
+          description: Invalid input provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Coupon not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/discount-coupons/deleteCoupons/{couponId}:
+    delete:
+      tags:
+        - Coupons
+      summary: Delete a discount coupon by ID
+      description: Deletes a discount coupon based on the provided coupon ID
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of the discount coupon
+          required: true
+          schema:
+            type: integer
+            example: 123
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Coupon deleted successfully
+        '404':
+          description: Coupon not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CouponInput:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Coupon code
+          example: SUMMER2023
+        discountPercentage:
+          type: number
+          format: float
+          description: Discount percentage
+          example: 15.5
+        expiresAt:
+          type: string
+          format: date-time
+          description: Expiration date and time
+          example: '2023-08-31T23:59:59.000Z'
+        productId:
+          type: integer
+          description: ID of the associated product
+          example: 12345
+      required:
+        - code
+        - discountPercentage
+        - expiresAt
+        - productId
+    Coupon:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Coupon's unique identifier in the database
+          example: 123
+        code:
+          type: string
+          description: Coupon code
+          example: SUMMER2023
+        discountPercentage:
+          type: number
+          format: float
+          description: Discount percentage
+          example: 15.5
+        expiresAt:
+          type: string
+          format: date-time
+          description: Expiration date and time
+          example: '2023-08-31T23:59:59.000Z'
+        productId:
+          type: integer
+          description: ID of the associated product
+          example: 12345
+      required:
+        - id
+        - code
+        - discountPercentage
+        - expiresAt
+        - productId
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A description of the error
+        code:
+          type: integer
+          description: An error code associated with the error
+        data:
+          type: object
+          description: Additional information about the error
+      example:
+        message: Invalid coupon code
+        code: 400
+securitySchemes:
+  BearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
