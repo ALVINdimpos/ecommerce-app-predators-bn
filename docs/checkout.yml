@@ -1,0 +1,46 @@
+/api/checkout:
+    post:
+      description: Checkout items in the cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: 
+                - country
+                - street_address
+                - post_code
+                - state
+                - town
+                - email
+              properties:
+                country:
+                  type: string
+                  description: The country of the buyer
+                  example: Rwanda
+                street_address:
+                  type: string
+                  description: The street address of the buyer
+                  example: KK 502 st
+                post_code:
+                  type: string
+                  description: Postal code of the buyer
+                  example: '0000'
+                state:
+                  type: string
+                  description: The state of the country of the buyer
+                  example: Kigali City
+                town:
+                  type: string
+                  description: The town of the buyer's location
+                  example: Kicukiro
+                email:
+                  type: string
+                  description: The email of the buyer
+                  example: juankirkland04@gmail.com
+      responses:
+        200:
+          description: Checkout Successful
+        500:
+          description: Checkout failed
