@@ -1,0 +1,51 @@
+paths:
+  /api/products/search:
+    get:
+      tags:
+        - product
+      summary: Search products by keyword
+      parameters:
+        - name: keyword
+          in: query
+          description: Keyword to search for products
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Name to search for products
+          required: false
+          schema:
+            type: string   
+        - name: price
+          in: query
+          description: Price to search for products
+          required: false
+          schema:
+            type: string     
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number 
