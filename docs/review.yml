@@ -1,0 +1,58 @@
+paths:
+  /api/review:
+    get:
+      tags:
+        - Users
+      summary: Get all reviews
+      description: Retrieve all reviews
+      responses:
+        "200":
+          description: OK
+  /api/review{id}:
+    post:
+      tags:
+        - Users
+      summary: Buyer can review a product
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to review
+          required: true
+          schema:
+            type: integer
+            example: "1"
+        - name: rating
+          in: query
+          description: add rating to a product or service
+          required: false
+          schema:
+            type: integer
+        - name: feedback
+          in: query
+          description: your feedback is important to us for future improvement
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Review"
+components:
+  schemas:
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        rating:
+          type: integer
+        feedback:
+          type: string
