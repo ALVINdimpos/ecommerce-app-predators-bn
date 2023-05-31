@@ -1,5 +1,7 @@
 /api/checkout:
     post:
+      tags:
+       - checkout
       description: Checkout items in the cart
       requestBody:
         required: true
