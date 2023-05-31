@@ -1,5 +1,5 @@
 paths:
-  /api/wishlist:
+  /api/wishlist/add:
     post:
       tags:
         - Wishlist
@@ -46,7 +46,7 @@ paths:
                       error:
                         type: string
 
-  /api/wishlist/{productId}:
+  /api/wishlist/delete/{productId}:
     delete:
       tags:
         - Wishlist
@@ -91,7 +91,7 @@ paths:
                       error:
                         type: string
 
-  /api/wishlist:
+  /api/wishlist/get:
     get:
       tags:
         - Wishlist
