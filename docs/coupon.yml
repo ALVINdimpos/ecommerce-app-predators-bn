@@ -2,7 +2,7 @@ paths:
   /api/discount-coupons/createCoupons:
     post:
       tags:
-        - Coupons
+        - coupon
       summary: Create a new discount coupon
       description: Creates a new discount coupon with the provided details
       requestBody:
