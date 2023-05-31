@@ -1,0 +1,60 @@
+paths:
+ /api/product:
+   post:
+     tags:
+       - Product
+     name: Create Product
+     summary: Create Product
+     security:
+        - bearerAuth: []
+     requestBody:
+        required: true
+     consumes:
+       - application/x-www-form-urlencoded
+     parameters:
+       - name: name
+         description: Product name
+         in: formData
+         required: true
+         type: string
+       - name: description
+         description: Product description
+         in: formData
+         required: true
+         type: string
+       - name: price
+         description: Product price
+         in: formData
+         required: true
+         type: number
+       - name: instock
+         description: Product quantity
+         in: formData
+         required: true
+         type: number
+       - name: category_id
+         description: Product category
+         in: formData
+         required: true
+         type: number
+       - name: picture_urls
+         description: Product image
+         in: formData
+         required: true
+         type: string
+       - name: available
+         description: Product status
+         in: formData
+         required: true
+         type: string
+responses:
+        '200':
+          description: Product created successfully
+          schema:
+            $ref: '#/definitions/Product'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
