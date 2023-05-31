@@ -2,7 +2,7 @@ paths:
   /api/products/search:
     get:
       tags:
-        - product
+        - Product
       summary: Search products by keyword
       parameters:
         - name: keyword
