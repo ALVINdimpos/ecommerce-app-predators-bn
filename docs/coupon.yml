@@ -35,7 +35,7 @@ paths:
   /api/discount-coupons/getCoupons/{couponId}:
     get:
       tags:
-        - Coupons
+        - coupon
       summary: Get a discount coupon by ID
       description: Retrieves a discount coupon based on the provided coupon ID
       parameters:
@@ -68,7 +68,7 @@ paths:
   /api/discount-coupons/getAllCoupons:
     get:
       tags:
-        - Coupons
+        - coupon
       summary: Get all discount coupons
       description: Retrieves all discount coupons
       responses:
@@ -89,7 +89,7 @@ paths:
   /api/discount-coupons/updateCoupon/{couponId}:
     put:
       tags:
-        - Coupons
+        - coupon
       summary: Update a discount coupon by ID
       description: Updates a discount coupon based on the provided coupon ID
       parameters:
@@ -136,7 +136,7 @@ paths:
   /api/discount-coupons/deleteCoupons/{couponId}:
     delete:
       tags:
-        - Coupons
+        - coupon
       summary: Delete a discount coupon by ID
       description: Deletes a discount coupon based on the provided coupon ID
       parameters:
