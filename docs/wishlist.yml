@@ -3,7 +3,6 @@ paths:
     post:
       tags:
         - Wishlist
-      name: Add Wishlist Item
       summary: Add an item to the wishlist
       security:
         - bearerAuth: []
@@ -51,7 +50,6 @@ paths:
     delete:
       tags:
         - Wishlist
-      name: Delete Wishlist Item
       summary: Delete an item from the wishlist
       security:
         - bearerAuth: []
@@ -97,7 +95,6 @@ paths:
     get:
       tags:
         - Wishlist
-      name: Get Wishlist
       summary: Get all items in the wishlist
       security:
         - bearerAuth: []
@@ -142,4 +139,6 @@ components:
         price:
           type: number
         picture_urls:
-          type: string
+          type: array
+          items:
+            type: string
