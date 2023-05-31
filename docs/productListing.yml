@@ -1,5 +1,5 @@
 tags:
-  - name: product
+  - name: Product
     description: An API for getting the list of products from the database depending on your role
 
 components:
@@ -24,7 +24,7 @@ paths:
     post:
       description: Get all products in your collection as vendor
       tags:
-        - product
+        - Product
       security:
         - bearerAuth: []
       requestBody:
@@ -51,7 +51,7 @@ paths:
     get:
       description: Get all available products as a buyer.
       tags:
-        - product
+        - Product
       security:
         - bearerAuth: []
       responses:
