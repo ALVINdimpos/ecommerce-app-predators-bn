@@ -70,28 +70,30 @@ class sendEmail {
   }
 
   static sendEmail(to, subject, text) {
-    const { USER_EMAIL, USER_PASS } = process.env;
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
+    const { USER_EMAIL, USER_PASS } = process.env; 
+    console.log(USER_EMAIL);
+   const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: USER_EMAIL,
+        user:USER_EMAIL,
         pass: USER_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
       },
     });
 
     const mailOptions = {
-      from: USER_EMAIL,
+      from:USER_EMAIL,
       to,
       subject,
-      text,
-    };
+      html:text,
+    }; 
     transporter.sendMail(mailOptions, (err, success) => {
-      if (err) return ('email not sent:', err);
-      return console.log('email sent', success);
+      if (err) return false;
+      return true;
     });
+
   }
   static sendNotification(to, subject, text) {
 
