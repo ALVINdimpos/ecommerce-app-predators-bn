@@ -301,8 +301,23 @@ export const register = async (req, res) => {
       preferred_language,
     });
     res.status(200).json({ message: user }); // /!\use jsend
-
     // Send confirmation email
+    const link = `${process.env.APP_URL}/login`;
+    const text = `
+    <p>Hi ${user.name},</p>
+    <p>Thank you for registering on our website.</p>
+    <p>Please click the link below to verify your email address.</p>
+    <a href="${link}">${link}</a>
+    <p>Best regards,</p>
+    <p>The E-commerce ATLP-Predators project team</p>
+    `;
+    const subject='Predators E-commerce Email Verification'
+    const Email= `${user.email}`
+    sendEmail.sendEmail(
+      Email,
+      subject,
+      text,
+    );
   } catch (err) {
     console.error(err);
     return res.status(500).send('Server error');
