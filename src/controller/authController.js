@@ -1,21 +1,21 @@
-
 /* eslint-disable */
 import bcrypt from 'bcrypt';
 import jsend from 'jsend';
+import dotenv from 'dotenv';
 import hasher from '../utils/hashPassword.js';
 import db from '../database/models/index.js';
 import Jwt from '../utils/jwt.js';
 import {
   getUserByGoogleId,
-  registerGoogle,updateUserPassword,
+  registerGoogle, updateUserPassword,
   getUserByEmail,
 } from '../services/user.services.js';
 import generateToken from '../utils/userToken.js';
 import sendEmail from '../utils/sendEmail.js';
-import dotenv from 'dotenv';
+
 dotenv.config();
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const { ADMIN_EMAIL } = process.env;
+const { ADMIN_PASSWORD } = process.env;
 
 export const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -111,50 +111,53 @@ export const googleAuthHandler = async (req, res) => {
   const newUser = {
     name: familyName,
     email: value,
-    password: "password",
+    password: 'password',
     roleId: 2,
     googleId: id,
-    status: "active",
+    status: 'active',
   };
   // Check if user already exists
   const user = await getUserByGoogleId(newUser.googleId);
   if (user) {
     // User already exists, generate JWT and redirect
-    const { id, email, name, password, roleId ,googleId} = user;
+    const {
+      id, email, name, password, roleId, googleId,
+    } = user;
     const userToken = Jwt.generateToken(
       {
-        id: id,
-        email: email,
-        name: name,
-        password: password,
-        roleId: roleId,
-        status: "active",
-        googleId: googleId,
+        id,
+        email,
+        name,
+        password,
+        roleId,
+        status: 'active',
+        googleId,
       },
-      "1h"
+      '1h',
     );
-    res.cookie("jwt", userToken);
+    res.cookie('jwt', userToken);
     return res.redirect(`/api/callback?key=${userToken}`);
   } else {
     // User does not exist, create new user and generate JWT
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newUser.password, saltRounds);
     newUser.password = hashedPassword;
-    const { id, email, name, password, roleId, googleId } =
-      await registerGoogle(newUser);
+    const {
+      id, email, name, password, roleId, googleId,
+    } = await registerGoogle(newUser);
     const userToken = Jwt.generateToken(
       {
-        id: id,
-        email: email,
-        name: name,
-        password: password,
-        roleId: roleId,
-        status: "active",
-        googleId: googleId,
+        id,
+        email,
+        name,
+        password,
+        roleId,
+        status: 'active',
+        googleId,
       },
-      "1h"
+      '1h',
     );
-    res.cookie("jwt", userToken);
+    res.cookie('jwt', userToken);
     return res.redirect(`/api/callback?key=${userToken}`);
   }
 };
@@ -306,90 +309,85 @@ export const register = async (req, res) => {
   }
 };
 
-// requesting reset password 
+// requesting reset password
 export const requestResetPassword = async (req, res) => {
-  const email=req.body.email; 
+  const { email } = req.body;
   try {
-     const user=await getUserByEmail(email);
-   
-      if (!user) { 
-        return res.status(400).jsend.error({
-            code: 400,
-            message: 'User with email does not exist!',
-            data: false
-        });
+    const user = await getUserByEmail(email);
 
-      }
+    if (!user) {
+      return res.status(400).jsend.error({
+        code: 400,
+        message: 'User with email does not exist!',
+        data: false,
+      });
+    }
 
-    const userEmail = { email, id: user.id }; 
-   
-    const token = Jwt.generateToken(userEmail,'15m');
- 
-      sendEmail.sendEmail({
-            email,
-            subject: 'Predators E-commerce Reset Password',
-            text: `
-                    <p>Reset your password.</p>
+    const userEmail = { email, id: user.id };
+
+    const token = Jwt.generateToken(userEmail, '15m');
+    const subject= 'Predators E-commerce Reset Password';
+    const text=` <p>Reset your password.</p>
                     <p>Please click the link below to reset your password.</p> 
                     
                     <a href="${process.env.APP_URL}/api/user/reset-password/${token}">Reset password</a>
-                    
-                    `
-          });   
-        res.cookie('reset-token', token,{httponly:true,expiresIn:'15m'});
+                    `;
+    sendEmail.sendEmail(email,subject,text);
+    res.cookie('reset-token', token, { httponly: true, expiresIn: '15m' });
 
-        res.status(200).send(jsend.success({ 
-                code:200, 
-                message: 'Password reset link was sent to your email', 
-                data:{ token }
-              }));
-
+    res.status(200).send(jsend.success({
+      code: 200,
+      message: 'Password reset link was sent to your email',
+      data: { token },
+    }));
   } catch (error) {
-     return res.status(500).send(jsend.fail({
-            code: 500,
-            message: error.message,
-            data: false
-          })); 
+    return res.status(500).send(jsend.fail({
+      code: 500,
+      message: error.message,
+      data: false,
+    }));
   }
-   
- 
 };
  
 // validate reset link
 export const resetPasswordLink = async (req, res) => {
-  try { 
+  try {
     const { token } = req.params;
     const payload = Jwt.verifyToken(token);
-    const userEmail = { email:payload.email};const user=await getUserByEmail(userEmail.email);     
-    if(!payload){
-      return res.status(401).send(jsend.fail({message: 'Token is invalid',data: false
-      }));
-    }else{
+     
+    const userEmail = { email: payload.value.email }; 
+    const user = await getUserByEmail(userEmail.email);
+    if (!payload) {
+      return res.status(401).send(jsend.fail({ message: 'Token is invalid', data: false }));
+    } else {
       if (!user) {
-            return res.status(401).send(jsend.fail({ message: "User does not exist",data:false }));
-        }
-        return res.status(200).send(jsend.fail({ message: 'User exists',data:user}));
-
-    }    
+        return res.status(401).send(jsend.fail({ message: 'User does not exist', data: false }));
+      }
+      return res.status(200).send(jsend.success({ message: 'User exists', data: user }));
+    }
   } catch (error) {
-      return res.status(401).send(jsend.fail({message:  error.message,data: false })); }};
+    return res.status(401).send(jsend.fail({ message: error.message, data: false }));
+  }
+};
 
 // reset password
 export const resetPassword = async (req, res) => {
-  try { 
-    const { token } = req.params; const payload = Jwt.verifyToken(token); 
-    const userPass=req.body  
-      await updateUserPassword(payload,userPass).then((result) =>
-      { 
-        if(result ==0) {return res.status(400).send(jsend.fail({ message: 'Password reset failed', data: false}));
-        }
-        res.cookie('reset-token','',{maxAge:1});
-        return res.status(200).send(jsend.success({message: 'You have reset successful your password',data:resul}));}
-       
-      ); 
+  try {
+    const { token } = req.params; 
+    const payload = Jwt.verifyToken(token); 
+    const userPass = req.body;
+    await updateUserPassword(payload, userPass).then((result) => {
+      if (result == 0) {
+        return res.status(400).send(jsend.fail({ message: 'Password reset failed', data: false }));
+      }
+      res.cookie('reset-token', '', { maxAge: 1 });
+      return res.status(200).send(jsend.success({ message: 'You have reset successful your password', data: result }));
+    });
   } catch (error) {
-     return res.status(401).send(jsend.fail({message: error.message, data:false })); }};
- 
+    return res.status(401).send(jsend.fail({ message: error.message, data: false }));
+  }
+};
+
 export default {
   googleAuthHandler,
   GetUsers,
