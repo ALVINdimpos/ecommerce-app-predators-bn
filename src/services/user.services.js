@@ -39,7 +39,7 @@ export const getUserByGoogleId = async (googleId) => {
 
 export const updateUserPassword = async (payload,userPass) => {
   try{ 
-        const email = payload.email; 
+        const email = payload.value.email; 
         const pass = userPass.password; 
         const password = await hashPassword(pass);  
         const findData = await db.User.findOne({
@@ -58,7 +58,7 @@ export const updateUserPassword = async (payload,userPass) => {
           return false
         }
       }catch(error){
-        return false
+        return error
       }
 };
  
