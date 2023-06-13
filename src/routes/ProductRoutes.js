@@ -17,7 +17,7 @@ router.put('/product/:id', isSeller, updateProduct);
 router.delete('/product/:id', isSeller, deleteSpecificProduct);
 router.get('/products/search', productSearch);
 router.get('/user/products', isBuyer, get_available_products);
-router.post('/vendor/collection', isSeller, get_collection);
+router.get('/vendor/collection', isSeller, get_collection);
 
 
 export default router;
