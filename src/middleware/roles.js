@@ -1,3 +1,4 @@
+/* eslint-disable */
 import db from "../database/models/index.js";
 import JwtUtility from "../utils/jwt.js";
 import dotenv from "dotenv";
@@ -7,7 +8,7 @@ const isAdmin = async (req, res, next) => {
   const authheader = req.headers.authorization;
   // assuming the token is sent in the Authorization header
   if (!authheader) {
-    return res.status(401).json({ message: 'Token not provided' }); // assuming the token is sent in the Authorization header
+    return res.status(401).json({ message: req.t('Token_not_provided') }); // assuming the token is sent in the Authorization header
   }
   const token = authheader.split(" ")[1];
   const { id } = req.params;
@@ -23,20 +24,20 @@ const isAdmin = async (req, res, next) => {
     } else {
       res
         .status(403)
-        .json({ message: 'Your are Unauthorized to perform this action' });
+        .json({ message: req.t('Not_authorized') });
     }
   } catch (err) {
     console.error(err);
     res
       .status(500)
-      .json({ message: 'Your are Unauthorized to perform this action' });
+      .json({ message: req.t('Not_authorized') });
   }
 };
 const isSeller = async (req, res, next) => {
   const authheader = req.headers.authorization;
   // assuming the token is sent in the Authorization header
   if (!authheader) {
-    return res.status(401).json({ message: 'Token not provided' }); // assuming the token is sent in the Authorization header
+    return res.status(401).json({ message: req.t('Token_not_provided') }); // assuming the token is sent in the Authorization header
   }
   const token = authheader.split(" ")[1];
   const { id } = req.params;
@@ -51,12 +52,12 @@ const isSeller = async (req, res, next) => {
     } else {
       res
         .status(403)
-        .json({ message: "Your are Unauthorized to perform this action" });
+        .json({ message: req.t('Not_authorized') });
     }
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Your are Unauthorized to perform this action" });
+      .json({ message: req.t('Not_authorized') });
       console.log(err)
   }
 };
@@ -64,7 +65,7 @@ const isBuyer = async (req, res, next) => {
   const authheader = req.headers.authorization;
   // assuming the token is sent in the Authorization header
   if (!authheader) {
-    return res.status(401).json({ message: 'Token not provided' }); // assuming the token is sent in the Authorization header
+    return res.status(401).json({ message: req.t('Token_not_provided') }); // assuming the token is sent in the Authorization header
   }
   const token = authheader.split(' ')[1];
   const { id } = req.params;
@@ -77,11 +78,11 @@ const isBuyer = async (req, res, next) => {
     } else {
       res
         .status(403)
-        .json({ message: 'Your are Unauthorized to perform this action' });
+        .json({ message: req.t('Not_authorized') });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: req.t('server_error')});
   }
 };
 
@@ -89,7 +90,7 @@ const checkUser = async (req,res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      res.status(401).send({ status: 401, message: "Not logged in" }); 
+      res.status(401).send({ status: 401, message: req.t("Not_logged_in") }); 
     }
     const token = authHeader.split(" ")[1];
     const decodedToken = JwtUtility.verifyToken(token);
@@ -98,11 +99,11 @@ const checkUser = async (req,res, next) => {
       req.user = user;
       next();
     } else {
-      res.status(403).send({ status: 403, message: 'User not found' });
+      res.status(403).send({ status: 403, message:req.t('User_not_found') });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send({ status: 500, message: 'Internal server error' });
+    res.status(500).send({ status: 500, message: req.t('server_error')});
   }
 }
 
@@ -110,7 +111,7 @@ const checkPermission = (permission) => async (req, res, next) => {
   const authheader = req.headers.authorization;
   // assuming the token is sent in the Authorization header
   if (!authheader) {
-    return res.status(401).json({ message: "Token not provided" }); // assuming the token is sent in the Authorization header
+    return res.status(401).json({ message:req.t("Token_not_provided") }); // assuming the token is sent in the Authorization header
   }
   const token = authheader.split(" ")[1];
   // const { id } = req.params;
@@ -129,18 +130,18 @@ const checkPermission = (permission) => async (req, res, next) => {
       // next();
       res
         .status(403)
-        .json({ message: 'Your are Unauthorized to perform this action' });
+        .json({ message: req.t('Not_authorized') });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: req.t('server_error') });
   }
 };
 const RestrictPassword = async (req, res, next) => {
   const authheader = req.headers.authorization;
   // assuming the token is sent in the Authorization header
   if (!authheader) {
-    return res.status(401).json({ message: 'Token not provided' }); // assuming the token is sent in the Authorization header
+    return res.status(401).json({ message: req.t('Token_not_provided') }); // assuming the token is sent in the Authorization header
     
   }
   const token = authheader.split(' ')[1];
@@ -150,7 +151,7 @@ const RestrictPassword = async (req, res, next) => {
     const user = await db.User.findOne({ where: { id: decodedToken.value.id } });
     if (!user) {
       return res.status(401).json({
-          message: "Your Identification is Invalid",
+          message:req.t("dentification"),
       });
   }
   const lastPasswordUpdate = user.last_password_update;
@@ -166,11 +167,33 @@ const RestrictPassword = async (req, res, next) => {
   next();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: req.t('server_error') });
+  }
+};
+// isLoggedIn middleware
+const isLoggedIn = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).send({ status: 401, message: req.t("Not_logged_in") });
+  }
+  const token = authHeader.split(" ")[1];
+  try {
+    const decodedToken = JwtUtility.verifyToken(token);
+    const user = await db.User.findOne({ where: { id: decodedToken.value.id } });
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      res.status(403).send({ status: 403, message: req.t('User_not_found') });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ status: 500, message: req.t('server_error') });
   }
 };
 
 
+
 export {
-  isAdmin, isSeller, isBuyer, checkPermission, checkUser, RestrictPassword
+  isAdmin, isSeller, isBuyer, checkPermission, checkUser, RestrictPassword,isLoggedIn
 };
