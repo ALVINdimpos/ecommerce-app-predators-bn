@@ -37,7 +37,7 @@ export const markNotificationAsRead = async (req, res) => {
       return res.status(404).json({ message: 'Notification not found' });
     }
 
-    notification.read = true;
+    notification.is_read = true;
     await notification.save();
 
     res.status(200).json(notification);
@@ -46,29 +46,30 @@ export const markNotificationAsRead = async (req, res) => {
     res.status(500).json({ message: 'Error marking notification as read' });
   }
 };
-// Mark all as readfor the logged-in user
+// Mark all as read for the logged-in user
 export const markAllAsRead = async (req, res) => {
   const userId = req.user.id;
+  console.log(userId)
   // Find notifications that are unread and belong to this user
   try {
-    const notifications = await Notification.findAll({
-      where: {
-        user_id: userId,
-        is_read: false,
-      },
-    });
-    let promises = [];
-    notifications.forEach((notification) => {
-      notification.is_read = true;
-      promises.push(notification.save());
-    });
-    Promise.allSettled(promises).then(() => {});
+    const notifications = await Notification.update(
+      { is_read: true },
+      {
+        where: {
+          user_id: userId,
+          is_read: false,
+        },
+      }
+    );
+
     res.status(200).json({ message: 'All notifications marked as read' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error marking notifications as read' });
   }
 };
+
+
 // Delete a notification for the logged-in user
 export const deleteNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
